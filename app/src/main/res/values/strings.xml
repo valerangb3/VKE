@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">VKE</string>
+    <string name="app_install">Установить</string>
 </resources>
