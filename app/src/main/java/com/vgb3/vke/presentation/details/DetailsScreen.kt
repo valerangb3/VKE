@@ -13,6 +13,7 @@ import com.vgb3.vke.ui.theme.VKETheme
 
 @Composable
 fun DetailsScreen(
+    appId: Long,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -92,6 +93,6 @@ fun DetailsScreen(
 @Composable
 fun DetailsScreenPreview() {
     VKETheme {
-        DetailsScreen()
+        DetailsScreen(appId = 1L)
     }
 }

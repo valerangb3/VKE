@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.vgb3.vke.navigation.AppNav
 import com.vgb3.vke.presentation.applist.ListScreen
 import com.vgb3.vke.ui.theme.VKETheme
 
@@ -28,9 +29,10 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun App(modifier: Modifier = Modifier) {
-    ListScreen(
+    AppNav()
+    /*ListScreen(
         modifier = modifier
-    )
+    )*/
 }
 
 @Preview(showBackground = true)

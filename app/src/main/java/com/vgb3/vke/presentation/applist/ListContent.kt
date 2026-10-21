@@ -45,7 +45,8 @@ object MockData {
 fun ListContent(
     modifier: Modifier = Modifier,
     verticalArrangement: Arrangement.HorizontalOrVertical = Arrangement.spacedBy(8.dp),
-    contentPadding: PaddingValues = PaddingValues(10.dp)
+    contentPadding: PaddingValues = PaddingValues(10.dp),
+    onItemClick: (appId: Long) -> Unit = {}
 ) {
     LazyColumn(
         modifier = modifier
@@ -53,7 +54,9 @@ fun ListContent(
         items(MockData.appList) { appModel ->
             AppItem(
                 appItem = appModel,
-                onClick = {},
+                onClick = {
+                    onItemClick(appModel.id.toLong())
+                },
                 onOnInstall = {}
             )
         }
