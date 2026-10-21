@@ -18,7 +18,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vgb3.vke.R
 import com.vgb3.vke.presentation.ButtonApp
+import com.vgb3.vke.presentation.common.SimilarApps
 import com.vgb3.vke.presentation.common.model.AppDetails
+import com.vgb3.vke.presentation.common.model.SimilarApp
 import com.vgb3.vke.ui.theme.VKETheme
 
 @Composable
@@ -45,6 +47,19 @@ fun DetailsContent(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
             onClick = {}
+        )
+
+        Spacer(Modifier.height(12.dp))
+        SimilarApps(
+            apps = List(15) { index ->
+                SimilarApp(
+                    id = "similar-app-$index",
+                    name = "Т-Банк",
+                    iconUrl = "https://static.rustore.ru/imgproxy/jinnNvWDiuYKlR6rYbP9DedPzELHgbe8opPzXh8k8FE/preset:web_app_icon_62/plain/https://static.rustore.ru/apk/220863/content/ICON/2238e3ca-e3e7-41d0-b037-777ddc637a5b.png@webp",
+                )
+            },
+            onDownloadClick = { },
+            modifier = Modifier.padding(horizontal = 16.dp),
         )
 
         Spacer(Modifier.height(12.dp))
