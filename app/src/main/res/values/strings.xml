@@ -2,4 +2,10 @@
     <string name="app_name">VKE</string>
     <string name="install_button">Установить</string>
     <string name="app_install">Установить</string>
+    <string name="app_details_screenshots">Скриншоты</string>
+    <string name="app_details_description">Описание приложения</string>
+    <string name="app_details_read_more">Читать подробнее</string>
+    <string name="app_details_developer">Разработчик</string>
+    <string name="app_details_age">Возраст</string>
+    <string name="app_details_size">Размер</string>
 </resources>
