@@ -1,5 +1,6 @@
 package com.vgb3.vke.presentation.details
 
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
@@ -7,20 +8,22 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.vgb3.vke.presentation.Toolbar
+import com.vgb3.vke.presentation.common.Toolbar
 import com.vgb3.vke.presentation.common.model.AppDetails
 import com.vgb3.vke.ui.theme.VKETheme
 
 @Composable
 fun DetailsScreen(
     appId: Long,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onBackClick: () -> Unit = {},
 ) {
     Scaffold(
+        modifier = modifier,
         topBar = {
             Toolbar(
                 onShareClick = {},
-                onBackClick = {}
+                onBackClick = onBackClick
             )
         }
     ) { contentPadding ->
@@ -82,8 +85,12 @@ fun DetailsScreen(
             ),
             modifier = Modifier
                 .fillMaxSize()
-                .safeDrawingPadding()
                 .padding(contentPadding)
+                // Отступы Scaffold уже включают статус-бар (через тулбар) и навигационную панель:
+                // помечаем их «использованными», чтобы safeDrawingPadding не добавил их второй раз
+                // и докинул только остальное (например, вырез камеры сбоку в landscape).
+                .consumeWindowInsets(contentPadding)
+                .safeDrawingPadding()
         )
     }
 }

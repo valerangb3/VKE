@@ -11,7 +11,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,7 +31,7 @@ fun DetailsContent(
     appDetails: AppDetails,
     modifier: Modifier = Modifier
 ) {
-    var descriptionCollapsed = rememberSaveable() { false }
+    var descriptionCollapsed by rememberSaveable { mutableStateOf(false) }
     Column(
         modifier = modifier.verticalScroll(rememberScrollState())
     ) {
@@ -59,12 +62,12 @@ fun DetailsContent(
                 )
             },
             onDownloadClick = { },
-            modifier = Modifier.padding(horizontal = 16.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp),
         )
 
         Spacer(Modifier.height(12.dp))
         ScreenshotsList(
-            screenshotUrlList = listOf("1", "2", "3"),
+            screenshotUrlList = appDetails.screenshotItems,
             contentPadding = PaddingValues(horizontal = 16.dp),
         )
         Spacer(Modifier.height(12.dp))
