@@ -9,7 +9,10 @@ import androidx.compose.ui.unit.dp
 import com.vgb3.vke.presentation.common.Toolbar
 
 @Composable
-fun ListScreen(modifier: Modifier = Modifier) {
+fun ListScreen(
+    modifier: Modifier = Modifier,
+    onItemClick: (appId: Long) -> Unit = {}
+) {
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -19,6 +22,7 @@ fun ListScreen(modifier: Modifier = Modifier) {
         }
     ) { contentPadding ->
         ListContent(
+            onItemClick = onItemClick,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(contentPadding)
