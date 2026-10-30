@@ -1,11 +1,11 @@
 package com.vgb3.vke.presentation.applist
 
 import androidx.annotation.StringRes
-import com.vgb3.vke.presentation.common.model.AppItem
+import com.vgb3.vke.domain.model.App
 
 sealed interface AppListUiState {
     data object Loading : AppListUiState
-    data class Content(val apps: List<AppItem>) : AppListUiState
+    data class Content(val apps: List<App>) : AppListUiState
 }
 
 sealed interface AppListEvent {

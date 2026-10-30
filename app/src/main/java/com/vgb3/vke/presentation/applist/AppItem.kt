@@ -1,6 +1,5 @@
 package com.vgb3.vke.presentation.applist
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,12 +25,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.vgb3.vke.R
-import com.vgb3.vke.presentation.common.model.AppItem as AppItemModel
+import com.vgb3.vke.domain.model.App
 import com.vgb3.vke.ui.theme.VKETheme
 
 @Composable
 fun AppItem(
-    appItem: AppItemModel,
+    app: App,
     onClick: () -> Unit,
     onOnInstall: () -> Unit,
     modifier: Modifier = Modifier
@@ -51,10 +50,10 @@ fun AppItem(
             modifier = Modifier
                 .size(72.dp)
                 .clip(RoundedCornerShape(8.dp)),
-            model = appItem.picture,
-            placeholder = painterResource(appItem.pictureRes),
-            error = painterResource(appItem.pictureRes),
-            fallback = painterResource(appItem.pictureRes),
+            model = app.iconUrl,
+            placeholder = painterResource(R.drawable.tbank),
+            error = painterResource(R.drawable.tbank),
+            fallback = painterResource(R.drawable.tbank),
             contentDescription = null,
             contentScale = ContentScale.Crop,
         )
@@ -63,13 +62,13 @@ fun AppItem(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
-                text = appItem.title,
+                text = app.title,
                 fontSize = 16.sp,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1
             )
             Text(
-                text = appItem.description,
+                text = app.description,
                 lineHeight = 14.sp,
                 overflow = TextOverflow.Ellipsis,
                 fontSize = 14.sp,
@@ -91,19 +90,12 @@ fun AppItem(
     }
 }
 
-@SuppressLint("ResourceType")
 @Preview
 @Composable
 fun AppItemPreview() {
     VKETheme() {
         AppItem(
-            appItem = AppItemModel(
-                id = 1,
-                picture = "",
-                title = "Т-Банк",
-                description = "Управляйте финансами в приложении...",
-                pictureRes = R.drawable.tbank
-            ),
+            app = previewApps.first(),
             onClick = {},
             onOnInstall = {}
         )

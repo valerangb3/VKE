@@ -8,18 +8,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.vgb3.vke.data.mockApps
+import com.vgb3.vke.domain.model.App
 import com.vgb3.vke.ui.theme.VKETheme
-import com.vgb3.vke.presentation.common.model.AppItem as AppItemModel
 
 @Composable
 fun ListContent(
-    apps: List<AppItemModel>,
+    apps: List<App>,
     modifier: Modifier = Modifier,
     verticalArrangement: Arrangement.HorizontalOrVertical = Arrangement.spacedBy(8.dp),
     contentPadding: PaddingValues = PaddingValues(vertical = 10.dp),
     onItemClick: (appId: Long) -> Unit = {},
-    onInstallClick: (app: AppItemModel) -> Unit = {},
+    onInstallClick: (app: App) -> Unit = {},
 ) {
     LazyColumn(
         modifier = modifier,
@@ -28,10 +27,8 @@ fun ListContent(
     ) {
         items(apps, key = { it.id }) { appModel ->
             AppItem(
-                appItem = appModel,
-                onClick = {
-                    onItemClick(appModel.id.toLong())
-                },
+                app = appModel,
+                onClick = { onItemClick(appModel.id) },
                 onOnInstall = { onInstallClick(appModel) }
             )
         }
@@ -42,6 +39,6 @@ fun ListContent(
 @Composable
 fun ListContentPreview() {
     VKETheme() {
-        ListContent(apps = mockApps)
+        ListContent(apps = previewApps)
     }
 }
