@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">VKE</string>
+    <string name="app_list_title">Приложения</string>
+    <string name="app_list_toolbar_snackbar">Это тулбар списка приложений 👋</string>
+    <string name="app_list_install_snackbar">Устанавливаем «%1$s»…</string>
     <string name="install_button">Установить</string>
     <string name="app_install">Установить</string>
     <string name="app_details_screenshots">Скриншоты</string>
