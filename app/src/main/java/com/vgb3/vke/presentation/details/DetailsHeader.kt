@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.vgb3.vke.R
-import com.vgb3.vke.presentation.common.model.AppDetails
+import com.vgb3.vke.domain.model.AppDetails
 import com.vgb3.vke.ui.theme.VKETheme
 import kotlin.math.roundToInt
 
@@ -92,6 +92,7 @@ fun DetailsHeaderPreview() {
         DetailsHeader(
             modifier = Modifier.fillMaxWidth(),
             appDetails = AppDetails(
+                id = 1,
                 category = "Финансы",
                 name = "Т-Банк",
                 developer = "T-Bank",

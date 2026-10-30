@@ -1,4 +1,4 @@
-package com.vgb3.vke.presentation.common.model
+package com.vgb3.vke.domain.model
 
 data class SimilarApp(
     val id: String,
