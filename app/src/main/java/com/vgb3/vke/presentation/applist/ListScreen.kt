@@ -18,38 +18,29 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import com.vgb3.vke.R
-import com.vgb3.vke.data.mockApps
 import com.vgb3.vke.presentation.common.Toolbar
-import com.vgb3.vke.presentation.common.model.AppItem
+import com.vgb3.vke.domain.model.App
 import com.vgb3.vke.ui.theme.VKETheme
 
-/**
- * Экран со связкой с ViewModel: берёт из неё состояние и события.
- */
+
 @Composable
 fun ListScreen(
+    viewModel: AppListViewModel,
     modifier: Modifier = Modifier,
     onItemClick: (appId: Long) -> Unit = {},
     onBackClick: () -> Unit = {},
-    viewModel: AppListViewModel = viewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
 
-    // Забираем одноразовые события из ViewModel.
-    // После поворота этот эффект запустится заново, но канал уже пуст —
-    // поэтому показанный Snackbar не повторится.
+
     LaunchedEffect(viewModel) {
         viewModel.events.collect { event ->
             when (event) {
                 is AppListEvent.ShowSnackbar -> {
-                    // Новый Snackbar сразу заменяет текущий, а не ждёт в очереди.
-                    // launch нужен, т.к. showSnackbar приостанавливается, пока Snackbar на экране,
-                    // и без него следующее событие не забралось бы из канала.
                     snackbarHostState.currentSnackbarData?.dismiss()
                     launch {
                         snackbarHostState.showSnackbar(
@@ -82,7 +73,7 @@ fun ListScreen(
     onToolbarClick: () -> Unit,
     onBackClick: () -> Unit,
     onItemClick: (appId: Long) -> Unit,
-    onInstallClick: (app: AppItem) -> Unit,
+    onInstallClick: (app: App) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -124,7 +115,7 @@ fun ListScreen(
 private fun ListScreenPreview() {
     VKETheme {
         ListScreen(
-            state = AppListUiState.Content(mockApps),
+            state = AppListUiState.Content(previewApps),
             snackbarHostState = remember { SnackbarHostState() },
             onToolbarClick = {},
             onBackClick = {},

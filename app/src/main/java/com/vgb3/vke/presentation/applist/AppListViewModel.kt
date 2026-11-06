@@ -3,8 +3,8 @@ package com.vgb3.vke.presentation.applist
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vgb3.vke.R
-import com.vgb3.vke.data.AppRepository
-import com.vgb3.vke.presentation.common.model.AppItem
+import com.vgb3.vke.domain.model.App
+import com.vgb3.vke.domain.repository.AppRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 class AppListViewModel(
-    private val repository: AppRepository = AppRepository()
+    private val repository: AppRepository,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<AppListUiState>(AppListUiState.Loading)
@@ -31,7 +31,7 @@ class AppListViewModel(
         _events.trySend(AppListEvent.ShowSnackbar(R.string.app_list_toolbar_snackbar))
     }
 
-    fun onInstallClick(app: AppItem) {
+    fun onInstallClick(app: App) {
         _events.trySend(
             AppListEvent.ShowSnackbar(
                 messageRes = R.string.app_list_install_snackbar,

@@ -27,7 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.vgb3.vke.R
-import com.vgb3.vke.presentation.common.model.SimilarApp
+import com.vgb3.vke.domain.model.SimilarApp
 import com.vgb3.vke.ui.theme.VKETheme
 
 @Composable
@@ -44,8 +44,6 @@ fun SimilarApps(
             modifier = Modifier.padding(contentPadding),
         )
         Spacer(Modifier.height(12.dp))
-        // Отступ по краям задаём через contentPadding, а не через padding у всего блока:
-        // тогда карточки при прокрутке уезжают до самого края экрана, а не обрезаются в 16dp от него.
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = contentPadding,
