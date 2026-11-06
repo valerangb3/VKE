@@ -3,14 +3,19 @@ package com.vgb3.vke.presentation.details
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vgb3.vke.domain.repository.AppRepository
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 
-class DetailsViewModel(
-    private val appId: Long,
+@HiltViewModel(assistedFactory = DetailsViewModel.Factory::class)
+class DetailsViewModel @AssistedInject constructor(
+    @Assisted private val appId: Long,
     private val repository: AppRepository,
 ) : ViewModel() {
 
@@ -28,5 +33,10 @@ class DetailsViewModel(
                 similarApps = repository.getSimilarApps(appId),
             )
         }
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(appId: Long): DetailsViewModel
     }
 }

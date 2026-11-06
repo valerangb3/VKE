@@ -7,9 +7,10 @@ import com.vgb3.vke.domain.model.AppDetails
 import com.vgb3.vke.domain.model.SimilarApp
 import com.vgb3.vke.domain.repository.AppRepository
 import kotlinx.coroutines.delay
+import javax.inject.Inject
 
 
-class AppRepositoryImpl : AppRepository {
+class AppRepositoryImpl @Inject constructor() : AppRepository {
 
     override suspend fun getApps(): List<App> {
         delay(LOADING_DELAY_MS) // имитация сетевого запроса

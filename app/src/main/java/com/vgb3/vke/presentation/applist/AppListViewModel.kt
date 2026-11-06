@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.vgb3.vke.R
 import com.vgb3.vke.domain.model.App
 import com.vgb3.vke.domain.repository.AppRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,8 +13,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class AppListViewModel(
+@HiltViewModel
+class AppListViewModel @Inject constructor(
     private val repository: AppRepository,
 ) : ViewModel() {
 
