@@ -32,7 +32,7 @@ fun DetailsContent(
     similarApps: List<SimilarApp>,
     modifier: Modifier = Modifier
 ) {
-    var descriptionCollapsed by rememberSaveable { mutableStateOf(false) }
+    var descriptionCollapsed by rememberSaveable(appDetails.id) { mutableStateOf(true) }
     Column(
         modifier = modifier.verticalScroll(rememberScrollState())
     ) {
@@ -53,18 +53,22 @@ fun DetailsContent(
             onClick = {}
         )
 
-        Spacer(Modifier.height(12.dp))
-        SimilarApps(
-            apps = similarApps,
-            onDownloadClick = { },
-            contentPadding = PaddingValues(horizontal = 16.dp),
-        )
+        if (similarApps.isNotEmpty()) {
+            Spacer(Modifier.height(12.dp))
+            SimilarApps(
+                apps = similarApps,
+                onDownloadClick = {},
+                contentPadding = PaddingValues(horizontal = 16.dp),
+            )
+        }
 
-        Spacer(Modifier.height(12.dp))
-        ScreenshotsList(
-            screenshotUrlList = appDetails.screenshotItems,
-            contentPadding = PaddingValues(horizontal = 16.dp),
-        )
+        if (appDetails.screenshotItems.isNotEmpty()) {
+            Spacer(Modifier.height(12.dp))
+            ScreenshotsList(
+                screenshotUrlList = appDetails.screenshotItems,
+                contentPadding = PaddingValues(horizontal = 16.dp),
+            )
+        }
         Spacer(Modifier.height(12.dp))
         DetailsDescription(
             description = appDetails.description,

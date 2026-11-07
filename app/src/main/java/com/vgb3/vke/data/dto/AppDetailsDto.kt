@@ -1,13 +1,16 @@
 package com.vgb3.vke.data.dto
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class AppDetailsDto(
-    val id: Long,
-    val appName: String,
-    val companyName: String,
-    val categoryName: String,
-    val ageLimit: Int,
-    val fileSizeBytes: Long,
-    val iconUrl: String?,
-    val screenshotUrls: List<String>?,
-    val fullDescription: String?,
+    val id: String,
+    val name: String,
+    val developer: String,
+    val category: String,
+    val ageRating: Int,
+    val size: Double,
+    val iconUrl: String? = null,
+    val screenshotUrlList: List<String>? = null,
+    val description: String? = null,
 )

@@ -5,6 +5,7 @@ import com.vgb3.vke.domain.model.App
 
 sealed interface AppListUiState {
     data object Loading : AppListUiState
+    data object Error : AppListUiState
     data class Content(val apps: List<App>) : AppListUiState
 }
 
