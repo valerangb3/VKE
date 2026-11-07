@@ -4,7 +4,7 @@ import com.vgb3.vke.domain.model.AppDetails
 import com.vgb3.vke.domain.model.SimilarApp
 
 internal val previewAppDetails = AppDetails(
-    id = 1,
+    id = "preview-1",
     name = "Т-Банк",
     developer = "T-Bank",
     category = "Финансы",

@@ -7,6 +7,8 @@ import com.vgb3.vke.domain.model.App
 import com.vgb3.vke.domain.repository.AppRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -26,6 +28,8 @@ class AppListViewModel @Inject constructor(
     private val _events = Channel<AppListEvent>(Channel.BUFFERED)
     val events: Flow<AppListEvent> = _events.receiveAsFlow()
 
+    private var loadJob: Job? = null
+
     init {
         loadApps()
     }
@@ -43,9 +47,17 @@ class AppListViewModel @Inject constructor(
         )
     }
 
-    private fun loadApps() {
-        viewModelScope.launch {
-            _state.value = AppListUiState.Content(repository.getApps())
+    fun loadApps() {
+        if (loadJob?.isActive == true) return
+        loadJob = viewModelScope.launch {
+            _state.value = AppListUiState.Loading
+            try {
+                _state.value = AppListUiState.Content(repository.getApps())
+            } catch (exception: CancellationException) {
+                throw exception
+            } catch (_: Exception) {
+                _state.value = AppListUiState.Error
+            }
         }
     }
 }

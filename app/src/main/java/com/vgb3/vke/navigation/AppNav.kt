@@ -18,7 +18,7 @@ import kotlinx.serialization.Serializable
 data object AppListKey : NavKey
 
 @Serializable
-data class AppDetailKey(val id: Long) : NavKey
+data class AppDetailKey(val id: String) : NavKey
 
 @Composable
 fun AppNav() {

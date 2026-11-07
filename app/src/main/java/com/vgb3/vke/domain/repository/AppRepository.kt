@@ -7,6 +7,6 @@ import com.vgb3.vke.domain.model.SimilarApp
 
 interface AppRepository {
     suspend fun getApps(): List<App>
-    suspend fun getAppDetails(id: Long): AppDetails
-    suspend fun getSimilarApps(id: Long): List<SimilarApp>
+    suspend fun getAppDetails(id: String): AppDetails
+    suspend fun getSimilarApps(id: String): List<SimilarApp>
 }

@@ -28,19 +28,19 @@ fun DetailsDescription(
         Spacer(Modifier.height(8.dp))
         Text(
             text = description,
-            maxLines = if (collapsed) Int.MAX_VALUE else 1,
+            maxLines = if (collapsed) 3 else Int.MAX_VALUE,
             overflow = TextOverflow.Ellipsis,
         )
-        if (!collapsed) {
-            TextButton(
-                onClick = onReadMoreClick,
-                contentPadding = PaddingValues(horizontal = 0.dp)
-            ) {
-                Text(
-                    text = stringResource(R.string.app_details_read_more),
-                    color = MaterialTheme.colorScheme.primary,
-                )
-            }
+        TextButton(
+            onClick = onReadMoreClick,
+            contentPadding = PaddingValues(horizontal = 0.dp),
+        ) {
+            Text(
+                text = stringResource(
+                    if (collapsed) R.string.app_details_read_more else R.string.app_details_read_less
+                ),
+                color = MaterialTheme.colorScheme.primary,
+            )
         }
     }
 }

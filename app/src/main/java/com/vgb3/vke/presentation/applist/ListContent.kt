@@ -17,7 +17,7 @@ fun ListContent(
     modifier: Modifier = Modifier,
     verticalArrangement: Arrangement.HorizontalOrVertical = Arrangement.spacedBy(8.dp),
     contentPadding: PaddingValues = PaddingValues(vertical = 10.dp),
-    onItemClick: (appId: Long) -> Unit = {},
+    onItemClick: (appId: String) -> Unit = {},
     onInstallClick: (app: App) -> Unit = {},
 ) {
     LazyColumn(

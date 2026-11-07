@@ -1,0 +1,16 @@
+[
+  {
+    "id": "fa2e31b8-1234-4cf7-9914-108a170a1b01",
+    "name": "QuickNote",
+    "description": "Лёгкое приложение для заметок и напоминаний",
+    "category": "Производительность",
+    "iconUrl": "https://fastly.picsum.photos/id/237/200/200.jpg?hmac=zHUGikXUDyLCCmvyww1izLK3R3k8oRYBRiTizZEdyfI"
+  },
+  {
+    "id": "82ea6f63-2b2a-43e1-b54c-ec62e6e27229",
+    "name": "Calmalist",
+    "description": "Списки дел с расслабляющими напоминаниями",
+    "category": "Производительность",
+    "iconUrl": "https://fastly.picsum.photos/id/238/200/200.jpg?hmac=O4Jc6lqHVfaKVzLf8bWssNTbWzQoaRUC0TDXod9xDdM"
+  }
+]
