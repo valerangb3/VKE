@@ -5,6 +5,7 @@ import com.vgb3.vke.domain.model.SimilarApp
 
 sealed interface DetailsUiState {
     data object Loading : DetailsUiState
+    data object Error : DetailsUiState
     data class Content(
         val details: AppDetails,
         val similarApps: List<SimilarApp>,

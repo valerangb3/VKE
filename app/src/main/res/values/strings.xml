@@ -3,11 +3,17 @@
     <string name="app_list_title">Приложения</string>
     <string name="app_list_toolbar_snackbar">Это тулбар списка приложений 👋</string>
     <string name="app_list_install_snackbar">Устанавливаем «%1$s»…</string>
+    <string name="app_list_load_error">Не удалось загрузить приложения. Проверьте подключение к интернету и попробуйте ещё раз.</string>
+    <string name="app_list_retry">Повторить</string>
+    <string name="app_list_empty">В каталоге пока нет приложений</string>
     <string name="install_button">Установить</string>
     <string name="app_install">Установить</string>
     <string name="app_details_screenshots">Скриншоты</string>
     <string name="app_details_description">Описание приложения</string>
     <string name="app_details_read_more">Читать подробнее</string>
+    <string name="app_details_read_less">Свернуть</string>
+    <string name="app_details_load_error">Не удалось загрузить карточку приложения. Проверьте подключение к интернету и попробуйте ещё раз.</string>
+    <string name="app_details_size_value">%1$.1f МБ</string>
     <string name="app_details_developer">Разработчик</string>
     <string name="app_details_similar_apps">Вам может понравиться</string>
     <string name="app_details_age">Возраст</string>

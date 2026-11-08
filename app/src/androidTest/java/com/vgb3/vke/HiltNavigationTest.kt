@@ -19,27 +19,32 @@ class HiltNavigationTest {
 
     @Test
     fun injectedViewModelsLoadDataAndRestoreDetailsAfterRecreation() {
-        waitForText("Гильдия Героев")
-        composeRule.onAllNodesWithText("Т-Банк").onFirst().performClick()
+        waitForText("QuickNote")
+        composeRule.onAllNodesWithText("QuickNote").onFirst().performClick()
 
-        waitForText("Финансы")
-        composeRule.onNodeWithText("Финансы").assertIsDisplayed()
+        // Экран загрузился через Hilt и assisted-фабрику с appId из Navigation 3.
+        waitForText("QuickSoft Inc.")
+        composeRule.onAllNodesWithText("QuickSoft Inc.").onFirst().assertIsDisplayed()
 
         composeRule.activityRule.scenario.recreate()
 
-        waitForText("Финансы")
-        composeRule.onNodeWithText("Финансы").assertIsDisplayed()
+        waitForText("QuickSoft Inc.")
+        composeRule.onAllNodesWithText("QuickSoft Inc.").onFirst().assertIsDisplayed()
 
         composeRule.runOnUiThread {
             composeRule.activity.onBackPressedDispatcher.onBackPressed()
         }
 
-        waitForText("Гильдия Героев")
-        composeRule.onNodeWithText("Гильдия Героев").assertIsDisplayed()
+        waitForText("Приложения")
+        composeRule.onNodeWithText("QuickNote").assertIsDisplayed()
+        composeRule.onNodeWithText("Calmalist").performClick()
+
+        waitForText("Calma Studios")
+        composeRule.onNodeWithText("Calmalist").assertIsDisplayed()
     }
 
     private fun waitForText(text: String) {
-        composeRule.waitUntil(timeoutMillis = 10_000) {
+        composeRule.waitUntil(timeoutMillis = 35_000) {
             composeRule.onAllNodesWithText(text).fetchSemanticsNodes().isNotEmpty()
         }
     }

@@ -5,13 +5,13 @@ import com.vgb3.vke.domain.model.App
 
 internal val previewApps = listOf(
     App(
-        id = 1,
+        id = "preview-1",
         title = "Т-Банк",
         description = "Управляйте финансами в приложении...",
         iconUrl = "",
     ),
     App(
-        id = 2,
+        id = "preview-2",
         title = "Гильдия Героев",
         description = "Экшен ММО РПГ: собирайте отряд и сражайтесь с боссами",
         iconUrl = "",
