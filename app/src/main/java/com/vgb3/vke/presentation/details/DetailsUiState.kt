@@ -9,5 +9,6 @@ sealed interface DetailsUiState {
     data class Content(
         val details: AppDetails,
         val similarApps: List<SimilarApp>,
+        val installState: InstallState = InstallState.NotInstalled,
     ) : DetailsUiState
 }

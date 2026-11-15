@@ -19,4 +19,15 @@
     <string name="app_details_age">Возраст</string>
     <string name="app_details_download">Скачать</string>
     <string name="app_details_size">Размер</string>
+    <string name="install_cancel">Отменить</string>
+    <string name="install_completed">Установлено</string>
+    <string name="install_progress">Установка: %1$d%%</string>
+    <string name="ratings_sequential">Рейтинги: последовательно</string>
+    <string name="ratings_parallel">Рейтинги: параллельно</string>
+    <string name="ratings_loading">Загрузка рейтингов…</string>
+    <string name="ratings_sequential_duration">Последовательно: %1$d мс</string>
+    <string name="ratings_parallel_duration">Параллельно: %1$d мс</string>
+    <string name="ratings_error">Не удалось загрузить рейтинги. Попробуйте ещё раз.</string>
+    <string name="app_rating">★ %1$.1f</string>
+    <string name="app_rating_pending">★ —</string>
 </resources>
