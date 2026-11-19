@@ -2,7 +2,8 @@ package com.vgb3.vke.presentation.details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.vgb3.vke.domain.repository.AppRepository
+import com.vgb3.vke.domain.usecase.GetAppDetailsUseCase
+import com.vgb3.vke.domain.usecase.GetSimilarAppsUseCase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -19,7 +20,8 @@ import kotlinx.coroutines.launch
 @HiltViewModel(assistedFactory = DetailsViewModel.Factory::class)
 class DetailsViewModel @AssistedInject constructor(
     @Assisted private val appId: String,
-    private val repository: AppRepository,
+    private val getAppDetails: GetAppDetailsUseCase,
+    private val getSimilarApps: GetSimilarAppsUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<DetailsUiState>(DetailsUiState.Loading)
@@ -39,7 +41,7 @@ class DetailsViewModel @AssistedInject constructor(
         loadJob = viewModelScope.launch {
             _state.value = DetailsUiState.Loading
             val details = try {
-                repository.getAppDetails(appId)
+                getAppDetails(appId)
             } catch (exception: CancellationException) {
                 throw exception
             } catch (_: Exception) {
@@ -52,7 +54,7 @@ class DetailsViewModel @AssistedInject constructor(
 
             // Дополнительный каталог не задерживает показ карточки и не скрывает её при ошибке.
             try {
-                val similarApps = repository.getSimilarApps(appId)
+                val similarApps = getSimilarApps(appId)
                 _state.update { current ->
                     if (current is DetailsUiState.Content) {
                         current.copy(similarApps = similarApps)

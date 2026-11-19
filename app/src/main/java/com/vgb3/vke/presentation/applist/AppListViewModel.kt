@@ -4,7 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vgb3.vke.R
 import com.vgb3.vke.domain.model.App
-import com.vgb3.vke.domain.repository.AppRepository
+import com.vgb3.vke.domain.usecase.GetAppsUseCase
+import com.vgb3.vke.domain.usecase.LoadRatingsInParallelUseCase
+import com.vgb3.vke.domain.usecase.LoadRatingsSequentiallyUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.CancellationException
@@ -21,7 +23,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AppListViewModel @Inject constructor(
-    private val repository: AppRepository,
+    private val getApps: GetAppsUseCase,
+    private val loadSequentialRatings: LoadRatingsSequentiallyUseCase,
+    private val loadParallelRatings: LoadRatingsInParallelUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<AppListUiState>(AppListUiState.Loading)
@@ -56,7 +60,7 @@ class AppListViewModel @Inject constructor(
         loadJob = viewModelScope.launch {
             _state.value = AppListUiState.Loading
             try {
-                _state.value = AppListUiState.Content(repository.getApps())
+                _state.value = AppListUiState.Content(getApps())
             } catch (exception: CancellationException) {
                 throw exception
             } catch (_: Exception) {
@@ -80,9 +84,9 @@ class AppListViewModel @Inject constructor(
                 val ratings: Map<String, Float>
                 val duration = measureTimeMillis {
                     ratings = if (parallel) {
-                        repository.loadRatingsInParallel(ids)
+                        loadParallelRatings(ids)
                     } else {
-                        repository.loadRatingsSequentially(ids)
+                        loadSequentialRatings(ids)
                     }
                 }
                 _state.update { state ->
