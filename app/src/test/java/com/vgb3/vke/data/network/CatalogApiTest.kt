@@ -171,6 +171,16 @@ class CatalogApiTest {
 
     private fun fixture(name: String): String = checkNotNull(javaClass.getResource("/$name")).readText()
 
+    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+    @Test
+    fun simulatedRatingWorksOnRetrofitApiWithoutAnHttpRequest() = kotlinx.coroutines.test.runTest {
+        val started = testScheduler.currentTime
+        val rating = api.getRating(APP_ID)
+        assertEquals(1500L, testScheduler.currentTime - started)
+        assertTrue(rating in 3f..5f)
+        assertEquals(0, server.requestCount)
+    }
+
     private fun jsonResponse(body: String): MockResponse = MockResponse()
         .setHeader("Content-Type", "application/json")
         .setBody(body)

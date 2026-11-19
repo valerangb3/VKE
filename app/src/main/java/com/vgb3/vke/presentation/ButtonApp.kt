@@ -14,10 +14,12 @@ import com.vgb3.vke.ui.theme.VKETheme
 fun ButtonApp(
     text: String,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     onClick: () -> Unit
 ) {
     Button(
         onClick = onClick,
+        enabled = enabled,
         shape = RoundedCornerShape(8.dp),
         contentPadding = PaddingValues(16.dp),
         modifier = modifier

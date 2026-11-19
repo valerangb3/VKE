@@ -6,6 +6,9 @@ import com.vgb3.vke.domain.model.App
 import com.vgb3.vke.domain.model.AppDetails
 import com.vgb3.vke.domain.model.SimilarApp
 import com.vgb3.vke.domain.repository.AppRepository
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import javax.inject.Inject
 
 class AppRepositoryImpl @Inject constructor(
@@ -20,4 +23,16 @@ class AppRepositoryImpl @Inject constructor(
     override suspend fun getSimilarApps(id: String): List<SimilarApp> = getApps()
         .filter { it.id != id }
         .map { SimilarApp(id = it.id, name = it.title, iconUrl = it.iconUrl) }
+
+    override suspend fun loadRatingsSequentially(ids: List<String>): Map<String, Float> = buildMap {
+        for (id in ids) {
+            put(id, api.getRating(id))
+        }
+    }
+
+    override suspend fun loadRatingsInParallel(ids: List<String>): Map<String, Float> = coroutineScope {
+        ids.map { id ->
+            async { id to api.getRating(id) }
+        }.awaitAll().toMap()
+    }
 }

@@ -9,9 +9,11 @@ import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @HiltViewModel(assistedFactory = DetailsViewModel.Factory::class)
@@ -24,6 +26,7 @@ class DetailsViewModel @AssistedInject constructor(
     val state: StateFlow<DetailsUiState> = _state.asStateFlow()
 
     private var loadJob: Job? = null
+    private var installJob: Job? = null
 
     init {
         loadDetails()
@@ -31,6 +34,8 @@ class DetailsViewModel @AssistedInject constructor(
 
     fun loadDetails() {
         if (loadJob?.isActive == true) return
+        installJob?.cancel()
+        installJob = null
         loadJob = viewModelScope.launch {
             _state.value = DetailsUiState.Loading
             val details = try {
@@ -47,12 +52,52 @@ class DetailsViewModel @AssistedInject constructor(
 
             // Дополнительный каталог не задерживает показ карточки и не скрывает её при ошибке.
             try {
-                _state.value = content.copy(similarApps = repository.getSimilarApps(appId))
+                val similarApps = repository.getSimilarApps(appId)
+                _state.update { current ->
+                    if (current is DetailsUiState.Content) {
+                        current.copy(similarApps = similarApps)
+                    } else {
+                        current
+                    }
+                }
             } catch (exception: CancellationException) {
                 throw exception
             } catch (_: Exception) {
                 // Карточка остаётся доступной без блока других приложений.
             }
+        }
+    }
+
+    fun onInstallClick() {
+        val current = _state.value
+        if (current !is DetailsUiState.Content) return
+
+        when (current.installState) {
+            is InstallState.Installing -> {
+                installJob?.cancel()
+                installJob = null
+                updateInstallState(InstallState.NotInstalled)
+            }
+            InstallState.NotInstalled -> {
+                // Сразу меняем состояние: повторный тап отменяет даже ещё не запущенную корутину.
+                updateInstallState(InstallState.Installing(0))
+                installJob = viewModelScope.launch { emulateInstall() }
+            }
+            InstallState.Installed -> Unit
+        }
+    }
+
+    private suspend fun emulateInstall() {
+        for (progress in 5..100 step 5) {
+            delay(150)
+            updateInstallState(InstallState.Installing(progress))
+        }
+        updateInstallState(InstallState.Installed)
+    }
+
+    private fun updateInstallState(installState: InstallState) {
+        _state.update { current ->
+            if (current is DetailsUiState.Content) current.copy(installState = installState) else current
         }
     }
 

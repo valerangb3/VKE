@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -13,6 +14,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.vgb3.vke.domain.model.AppDetails
 import com.vgb3.vke.presentation.details.DetailsScreen
 import com.vgb3.vke.presentation.details.DetailsUiState
+import com.vgb3.vke.presentation.details.InstallState
 import com.vgb3.vke.ui.theme.VKETheme
 import org.junit.Rule
 import org.junit.Test
@@ -62,6 +64,38 @@ class DetailsScreenTest {
             .performScrollTo().assertIsDisplayed().performClick()
         composeRule.onNodeWithText(context.getString(R.string.app_details_read_more))
             .performScrollTo().assertIsDisplayed()
+    }
+
+    @Test
+    fun installationShowsCancelAndClickReturnsToInstall() {
+        var state by mutableStateOf(
+            DetailsUiState.Content(details, emptyList(), InstallState.Installing(35))
+        )
+        composeRule.setContent {
+            VKETheme {
+                DetailsScreen(
+                    state = state,
+                    onBackClick = {},
+                    onInstallClick = { state = state.copy(installState = InstallState.NotInstalled) },
+                )
+            }
+        }
+        composeRule.onNodeWithText(context.getString(R.string.install_progress, 35)).assertIsDisplayed()
+        composeRule.onNodeWithText(context.getString(R.string.install_cancel)).performClick()
+        composeRule.onNodeWithText(context.getString(R.string.install_button)).assertIsDisplayed()
+    }
+
+    @Test
+    fun installedButtonIsDisabled() {
+        composeRule.setContent {
+            VKETheme {
+                DetailsScreen(
+                    state = DetailsUiState.Content(details, emptyList(), InstallState.Installed),
+                    onBackClick = {},
+                )
+            }
+        }
+        composeRule.onNodeWithText(context.getString(R.string.install_completed)).assertIsNotEnabled()
     }
 
     private val context get() = InstrumentationRegistry.getInstrumentation().targetContext

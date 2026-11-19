@@ -20,7 +20,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vgb3.vke.R
-import com.vgb3.vke.presentation.ButtonApp
 import com.vgb3.vke.presentation.common.SimilarApps
 import com.vgb3.vke.domain.model.AppDetails
 import com.vgb3.vke.domain.model.SimilarApp
@@ -30,7 +29,9 @@ import com.vgb3.vke.ui.theme.VKETheme
 fun DetailsContent(
     appDetails: AppDetails,
     similarApps: List<SimilarApp>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    installState: InstallState = InstallState.NotInstalled,
+    onInstallClick: () -> Unit = {},
 ) {
     var descriptionCollapsed by rememberSaveable(appDetails.id) { mutableStateOf(true) }
     Column(
@@ -44,13 +45,12 @@ fun DetailsContent(
             appDetails = appDetails
         )
         Spacer(Modifier.height(16.dp))
-        ButtonApp(
-
-            text = stringResource(R.string.install_button),
+        InstallButton(
+            installState = installState,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
-            onClick = {}
+            onClick = onInstallClick,
         )
 
         if (similarApps.isNotEmpty()) {

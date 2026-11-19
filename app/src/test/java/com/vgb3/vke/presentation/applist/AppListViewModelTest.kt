@@ -13,9 +13,13 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
@@ -91,8 +95,67 @@ class AppListViewModelTest {
         assertEquals(AppListUiState.Content(emptyList()), viewModel.state.value)
     }
 
+    @Test
+    fun bothModesPublishRatingsAndKeepTheirTimingResults() = runTest {
+        val vm = AppListViewModel(FakeRepository { listOf(app) })
+        advanceUntilIdle()
+        vm.loadRatingsSequentially()
+        assertTrue((vm.state.value as AppListUiState.Content).ratingsLoading)
+        advanceUntilIdle()
+        val sequential = vm.state.value as AppListUiState.Content
+        assertEquals(mapOf(app.id to 4.2f), sequential.ratings)
+        assertNotNull(sequential.sequentialDurationMs)
+        assertFalse(sequential.ratingsLoading)
+
+        vm.loadRatingsInParallel()
+        advanceUntilIdle()
+        val parallel = vm.state.value as AppListUiState.Content
+        assertEquals(mapOf(app.id to 4.5f), parallel.ratings)
+        assertEquals(sequential.sequentialDurationMs, parallel.sequentialDurationMs)
+        assertNotNull(parallel.parallelDurationMs)
+    }
+
+    @Test
+    fun ratingsFailureKeepsCatalogVisibleAndCanBeRetried() = runTest {
+        val repository = FakeRepository { listOf(app) }
+        repository.sequential = { throw IOException("Unavailable") }
+        val vm = AppListViewModel(repository)
+        advanceUntilIdle()
+        vm.loadRatingsSequentially()
+        advanceUntilIdle()
+        val failed = vm.state.value as AppListUiState.Content
+        assertEquals(listOf(app), failed.apps)
+        assertTrue(failed.ratingsError)
+        assertFalse(failed.ratingsLoading)
+
+        vm.loadRatingsInParallel()
+        advanceUntilIdle()
+        assertFalse((vm.state.value as AppListUiState.Content).ratingsError)
+        assertEquals(mapOf(app.id to 4.5f), (vm.state.value as AppListUiState.Content).ratings)
+    }
+
+    @Test
+    fun repeatedClicksCannotStartOverlappingRatingLoads() = runTest {
+        val repository = FakeRepository { listOf(app) }
+        repository.sequential = { awaitCancellation() }
+        val vm = AppListViewModel(repository)
+        advanceUntilIdle()
+        vm.loadRatingsSequentially()
+        vm.loadRatingsSequentially()
+        vm.loadRatingsInParallel()
+        runCurrent()
+        assertEquals(1, repository.sequentialCalls)
+        assertEquals(0, repository.parallelCalls)
+        vm.loadApps()
+        advanceUntilIdle()
+        assertFalse((vm.state.value as AppListUiState.Content).ratingsLoading)
+    }
+
     private class FakeRepository(var load: suspend () -> List<App>) : AppRepository {
         var calls = 0
+        var sequentialCalls = 0
+        var parallelCalls = 0
+        var sequential: suspend (List<String>) -> Map<String, Float> = { ids -> ids.associateWith { 4.2f } }
 
         override suspend fun getApps(): List<App> {
             calls++
@@ -102,6 +165,16 @@ class AppListViewModelTest {
         override suspend fun getAppDetails(id: String): AppDetails = error("Not used")
 
         override suspend fun getSimilarApps(id: String): List<SimilarApp> = error("Not used")
+
+        override suspend fun loadRatingsSequentially(ids: List<String>): Map<String, Float> {
+            sequentialCalls++
+            return sequential(ids)
+        }
+
+        override suspend fun loadRatingsInParallel(ids: List<String>): Map<String, Float> {
+            parallelCalls++
+            return ids.associateWith { 4.5f }
+        }
     }
 
     private val app = App(

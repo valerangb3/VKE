@@ -19,15 +19,19 @@ fun ListContent(
     contentPadding: PaddingValues = PaddingValues(vertical = 10.dp),
     onItemClick: (appId: String) -> Unit = {},
     onInstallClick: (app: App) -> Unit = {},
+    ratings: Map<String, Float> = emptyMap(),
+    header: @Composable (() -> Unit)? = null,
 ) {
     LazyColumn(
         modifier = modifier,
         verticalArrangement = verticalArrangement,
         contentPadding = contentPadding,
     ) {
+        header?.let { content -> item(key = "ratings-controls") { content() } }
         items(apps, key = { it.id }) { appModel ->
             AppItem(
                 app = appModel,
+                rating = ratings[appModel.id],
                 onClick = { onItemClick(appModel.id) },
                 onOnInstall = { onInstallClick(appModel) }
             )

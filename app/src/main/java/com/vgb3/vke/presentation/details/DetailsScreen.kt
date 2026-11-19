@@ -36,6 +36,7 @@ fun DetailsScreen(
         state = state,
         onBackClick = onBackClick,
         onRetryClick = viewModel::loadDetails,
+        onInstallClick = viewModel::onInstallClick,
         modifier = modifier,
     )
 }
@@ -46,6 +47,7 @@ fun DetailsScreen(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
     onRetryClick: () -> Unit = {},
+    onInstallClick: () -> Unit = {},
 ) {
     Scaffold(
         modifier = modifier,
@@ -86,6 +88,8 @@ fun DetailsScreen(
             is DetailsUiState.Content -> DetailsContent(
                 appDetails = state.details,
                 similarApps = state.similarApps,
+                installState = state.installState,
+                onInstallClick = onInstallClick,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(contentPadding)

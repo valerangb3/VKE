@@ -136,6 +136,10 @@ class DetailsViewModelTest {
         }
 
         override suspend fun getSimilarApps(id: String): List<SimilarApp> = loadSimilar()
+
+        override suspend fun loadRatingsSequentially(ids: List<String>): Map<String, Float> = error("Not used")
+
+        override suspend fun loadRatingsInParallel(ids: List<String>): Map<String, Float> = error("Not used")
     }
 
     private val details = AppDetails(

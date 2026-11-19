@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -33,16 +34,18 @@ fun AppItem(
     app: App,
     onClick: () -> Unit,
     onOnInstall: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    rating: Float? = null,
 ) {
     Row(
         modifier = modifier
-            .height(88.dp)
+            .heightIn(min = 104.dp)
             .fillMaxWidth()
             .clip(RoundedCornerShape(8.dp))
             .clickable {
                 onClick()
-            },
+            }
+            .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -59,7 +62,7 @@ fun AppItem(
         )
         Column(
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(
                 text = app.title,
@@ -73,6 +76,15 @@ fun AppItem(
                 overflow = TextOverflow.Ellipsis,
                 fontSize = 14.sp,
                 maxLines = 2
+            )
+            Text(
+                text = if (rating == null) {
+                    stringResource(R.string.app_rating_pending)
+                } else {
+                    stringResource(R.string.app_rating, rating)
+                },
+                fontSize = 14.sp,
+                maxLines = 1,
             )
         }
         Button(

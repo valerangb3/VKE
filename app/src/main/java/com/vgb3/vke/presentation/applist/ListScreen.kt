@@ -65,6 +65,8 @@ fun ListScreen(
         onItemClick = onItemClick,
         onInstallClick = viewModel::onInstallClick,
         onRetryClick = viewModel::loadApps,
+        onSequentialRatingsClick = viewModel::loadRatingsSequentially,
+        onParallelRatingsClick = viewModel::loadRatingsInParallel,
         modifier = modifier,
     )
 }
@@ -82,6 +84,8 @@ fun ListScreen(
     onInstallClick: (app: App) -> Unit,
     modifier: Modifier = Modifier,
     onRetryClick: () -> Unit = {},
+    onSequentialRatingsClick: () -> Unit = {},
+    onParallelRatingsClick: () -> Unit = {},
 ) {
     Scaffold(
         modifier = modifier,
@@ -137,6 +141,14 @@ fun ListScreen(
             } else {
                 ListContent(
                     apps = state.apps,
+                    ratings = state.ratings,
+                    header = {
+                        RatingsControls(
+                            state = state,
+                            onSequentialClick = onSequentialRatingsClick,
+                            onParallelClick = onParallelRatingsClick,
+                        )
+                    },
                     onItemClick = onItemClick,
                     onInstallClick = onInstallClick,
                     modifier = Modifier
