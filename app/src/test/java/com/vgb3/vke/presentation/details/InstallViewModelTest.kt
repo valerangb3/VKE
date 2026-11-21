@@ -5,6 +5,8 @@ import com.vgb3.vke.domain.model.App
 import com.vgb3.vke.domain.model.AppDetails
 import com.vgb3.vke.domain.model.SimilarApp
 import com.vgb3.vke.domain.repository.AppRepository
+import com.vgb3.vke.domain.usecase.GetAppDetailsUseCase
+import com.vgb3.vke.domain.usecase.GetSimilarAppsUseCase
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -30,7 +32,7 @@ class InstallViewModelTest {
 
     @Test
     fun installationProgressCompletesAndInstalledAppCannotStartAgain() = runTest {
-        val vm = DetailsViewModel(details.id, repository())
+        val vm = createViewModel(details.id, repository())
         advanceUntilIdle()
 
         vm.onInstallClick()
@@ -49,7 +51,7 @@ class InstallViewModelTest {
 
     @Test
     fun cancellationResetsProgressAndCancelledJobCannotFinishInstallation() = runTest {
-        val vm = DetailsViewModel(details.id, repository())
+        val vm = createViewModel(details.id, repository())
         advanceUntilIdle()
         vm.onInstallClick()
         runCurrent()
@@ -70,7 +72,7 @@ class InstallViewModelTest {
 
     @Test
     fun rapidStartCancelStartDoesNotLeaveAnOldInstallationRunning() = runTest {
-        val vm = DetailsViewModel(details.id, repository())
+        val vm = createViewModel(details.id, repository())
         advanceUntilIdle()
         vm.onInstallClick()
         vm.onInstallClick()
@@ -88,7 +90,7 @@ class InstallViewModelTest {
     @Test
     fun similarAppsCompletionPreservesInstallationProgress() = runTest {
         val pending = CompletableDeferred<List<SimilarApp>>()
-        val vm = DetailsViewModel(details.id, repository { pending.await() })
+        val vm = createViewModel(details.id, repository { pending.await() })
         runCurrent()
         vm.onInstallClick()
         runCurrent()
@@ -105,7 +107,7 @@ class InstallViewModelTest {
 
     @Test
     fun clearingViewModelCancelsInstallationThroughItsScope() = runTest {
-        val vm = DetailsViewModel(details.id, repository())
+        val vm = createViewModel(details.id, repository())
         val store = ViewModelStore().apply { put("details", vm) }
         advanceUntilIdle()
         vm.onInstallClick()
@@ -121,11 +123,17 @@ class InstallViewModelTest {
 
     @Test
     fun clickBeforeContentLoadsDoesNotStartInstallation() = runTest {
-        val vm = DetailsViewModel(details.id, repository())
+        val vm = createViewModel(details.id, repository())
         vm.onInstallClick()
         advanceUntilIdle()
         assertEquals(InstallState.NotInstalled, vm.content().installState)
     }
+
+    private fun createViewModel(appId: String, repository: AppRepository) = DetailsViewModel(
+        appId,
+        GetAppDetailsUseCase(repository),
+        GetSimilarAppsUseCase(repository),
+    )
 
     private fun DetailsViewModel.content() = state.value as DetailsUiState.Content
 

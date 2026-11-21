@@ -4,6 +4,9 @@ import com.vgb3.vke.domain.model.App
 import com.vgb3.vke.domain.model.AppDetails
 import com.vgb3.vke.domain.model.SimilarApp
 import com.vgb3.vke.domain.repository.AppRepository
+import com.vgb3.vke.domain.usecase.GetAppsUseCase
+import com.vgb3.vke.domain.usecase.LoadRatingsInParallelUseCase
+import com.vgb3.vke.domain.usecase.LoadRatingsSequentiallyUseCase
 import java.io.IOException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -39,7 +42,7 @@ class AppListViewModelTest {
     @Test
     fun loadsCatalogAndExposesServerData() = runTest {
         val repository = FakeRepository { listOf(app) }
-        val viewModel = AppListViewModel(repository)
+        val viewModel = createViewModel(repository)
 
         assertEquals(AppListUiState.Loading, viewModel.state.value)
         advanceUntilIdle()
@@ -51,7 +54,7 @@ class AppListViewModelTest {
     @Test
     fun networkFailureCanBeRetriedSuccessfully() = runTest {
         val repository = FakeRepository { throw IOException("Offline") }
-        val viewModel = AppListViewModel(repository)
+        val viewModel = createViewModel(repository)
         advanceUntilIdle()
         assertEquals(AppListUiState.Error, viewModel.state.value)
 
@@ -66,7 +69,7 @@ class AppListViewModelTest {
     @Test
     fun repeatedRetryDoesNotStartParallelRequests() = runTest {
         val repository = FakeRepository { awaitCancellation() }
-        val viewModel = AppListViewModel(repository)
+        val viewModel = createViewModel(repository)
         advanceUntilIdle()
 
         viewModel.loadApps()
@@ -79,7 +82,7 @@ class AppListViewModelTest {
 
     @Test
     fun cancellationIsNotShownAsNetworkFailure() = runTest {
-        val viewModel = AppListViewModel(FakeRepository { throw CancellationException() })
+        val viewModel = createViewModel(FakeRepository { throw CancellationException() })
 
         advanceUntilIdle()
 
@@ -88,7 +91,7 @@ class AppListViewModelTest {
 
     @Test
     fun emptyCatalogIsNotAnError() = runTest {
-        val viewModel = AppListViewModel(FakeRepository { emptyList() })
+        val viewModel = createViewModel(FakeRepository { emptyList() })
 
         advanceUntilIdle()
 
@@ -97,7 +100,7 @@ class AppListViewModelTest {
 
     @Test
     fun bothModesPublishRatingsAndKeepTheirTimingResults() = runTest {
-        val vm = AppListViewModel(FakeRepository { listOf(app) })
+        val vm = createViewModel(FakeRepository { listOf(app) })
         advanceUntilIdle()
         vm.loadRatingsSequentially()
         assertTrue((vm.state.value as AppListUiState.Content).ratingsLoading)
@@ -119,7 +122,7 @@ class AppListViewModelTest {
     fun ratingsFailureKeepsCatalogVisibleAndCanBeRetried() = runTest {
         val repository = FakeRepository { listOf(app) }
         repository.sequential = { throw IOException("Unavailable") }
-        val vm = AppListViewModel(repository)
+        val vm = createViewModel(repository)
         advanceUntilIdle()
         vm.loadRatingsSequentially()
         advanceUntilIdle()
@@ -138,7 +141,7 @@ class AppListViewModelTest {
     fun repeatedClicksCannotStartOverlappingRatingLoads() = runTest {
         val repository = FakeRepository { listOf(app) }
         repository.sequential = { awaitCancellation() }
-        val vm = AppListViewModel(repository)
+        val vm = createViewModel(repository)
         advanceUntilIdle()
         vm.loadRatingsSequentially()
         vm.loadRatingsSequentially()
@@ -150,6 +153,12 @@ class AppListViewModelTest {
         advanceUntilIdle()
         assertFalse((vm.state.value as AppListUiState.Content).ratingsLoading)
     }
+
+    private fun createViewModel(repository: AppRepository) = AppListViewModel(
+        GetAppsUseCase(repository),
+        LoadRatingsSequentiallyUseCase(repository),
+        LoadRatingsInParallelUseCase(repository),
+    )
 
     private class FakeRepository(var load: suspend () -> List<App>) : AppRepository {
         var calls = 0

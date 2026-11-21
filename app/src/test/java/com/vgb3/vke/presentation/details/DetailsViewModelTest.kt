@@ -4,6 +4,8 @@ import com.vgb3.vke.domain.model.App
 import com.vgb3.vke.domain.model.AppDetails
 import com.vgb3.vke.domain.model.SimilarApp
 import com.vgb3.vke.domain.repository.AppRepository
+import com.vgb3.vke.domain.usecase.GetAppDetailsUseCase
+import com.vgb3.vke.domain.usecase.GetSimilarAppsUseCase
 import java.io.IOException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
@@ -36,7 +38,7 @@ class DetailsViewModelTest {
     @Test
     fun loadsDetailsForSelectedUuid() = runTest {
         val repository = FakeRepository { details }
-        val viewModel = DetailsViewModel(details.id, repository)
+        val viewModel = createViewModel(details.id, repository)
 
         assertEquals(DetailsUiState.Loading, viewModel.state.value)
         advanceUntilIdle()
@@ -48,7 +50,7 @@ class DetailsViewModelTest {
     @Test
     fun failedDetailsCanBeRetried() = runTest {
         val repository = FakeRepository { throw IOException("Offline") }
-        val viewModel = DetailsViewModel(details.id, repository)
+        val viewModel = createViewModel(details.id, repository)
         advanceUntilIdle()
         assertEquals(DetailsUiState.Error, viewModel.state.value)
 
@@ -64,7 +66,7 @@ class DetailsViewModelTest {
     fun failedOtherAppsDoNotHideLoadedDetails() = runTest {
         val repository = FakeRepository { details }
         repository.loadSimilar = { throw IOException("Catalog unavailable") }
-        val viewModel = DetailsViewModel(details.id, repository)
+        val viewModel = createViewModel(details.id, repository)
 
         advanceUntilIdle()
 
@@ -76,7 +78,7 @@ class DetailsViewModelTest {
         val otherApps = CompletableDeferred<List<SimilarApp>>()
         val repository = FakeRepository { details }
         repository.loadSimilar = { otherApps.await() }
-        val viewModel = DetailsViewModel(details.id, repository)
+        val viewModel = createViewModel(details.id, repository)
         runCurrent()
 
         assertEquals(DetailsUiState.Content(details, emptyList()), viewModel.state.value)
@@ -92,7 +94,7 @@ class DetailsViewModelTest {
     fun repeatedRetryDoesNotStartParallelDetailsRequests() = runTest {
         val pendingDetails = CompletableDeferred<AppDetails>()
         val repository = FakeRepository { pendingDetails.await() }
-        val viewModel = DetailsViewModel(details.id, repository)
+        val viewModel = createViewModel(details.id, repository)
         runCurrent()
 
         viewModel.loadDetails()
@@ -106,7 +108,7 @@ class DetailsViewModelTest {
 
     @Test
     fun detailsCancellationIsNotDisplayedAsError() = runTest {
-        val viewModel = DetailsViewModel(details.id, FakeRepository { throw CancellationException() })
+        val viewModel = createViewModel(details.id, FakeRepository { throw CancellationException() })
 
         advanceUntilIdle()
 
@@ -117,12 +119,18 @@ class DetailsViewModelTest {
     fun otherAppsCancellationKeepsVisibleDetails() = runTest {
         val repository = FakeRepository { details }
         repository.loadSimilar = { throw CancellationException() }
-        val viewModel = DetailsViewModel(details.id, repository)
+        val viewModel = createViewModel(details.id, repository)
 
         advanceUntilIdle()
 
         assertEquals(DetailsUiState.Content(details, emptyList()), viewModel.state.value)
     }
+
+    private fun createViewModel(appId: String, repository: AppRepository) = DetailsViewModel(
+        appId,
+        GetAppDetailsUseCase(repository),
+        GetSimilarAppsUseCase(repository),
+    )
 
     private class FakeRepository(var loadDetails: suspend () -> AppDetails) : AppRepository {
         val requestedIds = mutableListOf<String>()

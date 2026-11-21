@@ -24,3 +24,23 @@ fun AppDetailsDto.toDomain(): AppDetails = AppDetails(
     description = description.orEmpty(),
     iconApp = iconUrl.orEmpty(),
 )
+
+// Категория есть только в DTO списка; Domain-модель App её не хранит.
+fun App.toDto(): AppDto = AppDto(
+    id = id,
+    name = title,
+    description = description,
+    iconUrl = iconUrl,
+)
+
+fun AppDetails.toDto(): AppDetailsDto = AppDetailsDto(
+    id = id,
+    name = name,
+    developer = developer,
+    category = category,
+    ageRating = age,
+    size = appSize,
+    iconUrl = iconApp,
+    screenshotUrlList = screenshotItems,
+    description = description,
+)
